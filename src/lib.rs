@@ -1,10 +1,6 @@
-//! [![github]](https://github.com/dtolnay/proc-macro2)&ensp;[![crates-io]](https://crates.io/crates/proc-macro2)&ensp;[![docs-rs]](crate)
-//!
-//! [github]: https://img.shields.io/badge/github-8da0cb?style=for-the-badge&labelColor=555555&logo=github
-//! [crates-io]: https://img.shields.io/badge/crates.io-fc8d62?style=for-the-badge&labelColor=555555&logo=rust
-//! [docs-rs]: https://img.shields.io/badge/docs.rs-66c2a5?style=for-the-badge&labelColor=555555&logo=docs.rs
-//!
-//! <br>
+//! This is a fork of `safe_proc_macro2` with unsafe code removed.
+//! See the [rejected PR](https://github.com/alexcrichton/proc-macro2/pull/261).
+//! ----
 //!
 //! A wrapper around the procedural macro API of the compiler's [`proc_macro`]
 //! crate. This library serves two purposes:
