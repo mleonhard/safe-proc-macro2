@@ -1,4 +1,4 @@
-use proc_macro2::Span;
+use safe_proc_macro2::Span;
 
 fn main() {
     fn requires_send<T: Send>() {}

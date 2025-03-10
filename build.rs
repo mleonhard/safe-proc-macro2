@@ -174,7 +174,7 @@ fn compile_probe(rustc_bootstrap: bool) -> bool {
 
     cmd.stderr(Stdio::null())
         .arg("--edition=2021")
-        .arg("--crate-name=proc_macro2")
+        .arg("--crate-name=safe_proc_macro2")
         .arg("--crate-type=lib")
         .arg("--cap-lints=allow")
         .arg("--emit=dep-info,metadata")

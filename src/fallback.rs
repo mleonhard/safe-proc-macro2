@@ -12,11 +12,9 @@ use core::cell::RefCell;
 #[cfg(span_locations)]
 use core::cmp;
 use core::fmt::{self, Debug, Display, Write};
-use core::mem::ManuallyDrop;
 #[cfg(span_locations)]
 use core::ops::Range;
 use core::ops::RangeBounds;
-use core::ptr;
 use core::str;
 #[cfg(feature = "proc-macro")]
 use core::str::FromStr;
@@ -91,9 +89,10 @@ impl TokenStream {
         self.inner.len() == 0
     }
 
-    fn take_inner(self) -> RcVecBuilder<TokenTree> {
-        let nodrop = ManuallyDrop::new(self);
-        unsafe { ptr::read(&nodrop.inner) }.make_owned()
+    fn take_inner(mut self) -> RcVecBuilder<TokenTree> {
+        let mut value = RcVecBuilder::new().build();
+        core::mem::swap(&mut self.inner, &mut value);
+        value.make_owned()
     }
 }
 
@@ -837,11 +836,11 @@ impl Ident {
 }
 
 pub(crate) fn is_ident_start(c: char) -> bool {
-    c == '_' || unicode_ident::is_xid_start(c)
+    c == '_' || unicode_xid::UnicodeXID::is_xid_start(c)
 }
 
 pub(crate) fn is_ident_continue(c: char) -> bool {
-    unicode_ident::is_xid_continue(c)
+    unicode_xid::UnicodeXID::is_xid_continue(c)
 }
 
 #[track_caller]
@@ -997,8 +996,8 @@ impl Literal {
         Err(LexError::call_site())
     }
 
-    pub(crate) unsafe fn from_str_unchecked(repr: &str) -> Self {
-        Literal::_new(repr.to_owned())
+    pub(crate) fn from_str_unchecked(repr: &str) -> Self {
+        Self::from_str_checked(repr).unwrap()
     }
 
     suffixed_numbers! {

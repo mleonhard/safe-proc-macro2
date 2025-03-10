@@ -39,9 +39,9 @@
 //! # };
 //! # #[cfg(wrap_proc_macro)]
 //! pub fn my_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-//!     let input = proc_macro2::TokenStream::from(input);
+//!     let input = safe_proc_macro2::TokenStream::from(input);
 //!
-//!     let output: proc_macro2::TokenStream = {
+//!     let output: safe_proc_macro2::TokenStream = {
 //!         /* transform input */
 //!         # input
 //!     };
@@ -82,9 +82,10 @@
 //! Most types in this crate are `!Sync` because the underlying compiler
 //! types make use of thread-local memory, meaning they cannot be accessed from
 //! a different thread.
+#![forbid(unsafe_code)]
 
 // Proc-macro2 types in rustdoc of other crates get linked to here.
-#![doc(html_root_url = "https://docs.rs/proc-macro2/1.0.94")]
+#![doc(html_root_url = "https://docs.rs/safe-proc-macro2/1.0.94")]
 #![cfg_attr(any(proc_macro_span, super_unstable), feature(proc_macro_span))]
 #![cfg_attr(super_unstable, feature(proc_macro_def_site))]
 #![cfg_attr(docsrs, feature(doc_cfg))]
@@ -448,7 +449,7 @@ impl Span {
         Span::_new(self.inner.located_at(other.inner))
     }
 
-    /// Convert `proc_macro2::Span` to `proc_macro::Span`.
+    /// Convert `safe_proc_macro2::Span` to `proc_macro::Span`.
     ///
     /// This method is available when building with a nightly compiler, or when
     /// building with rustc 1.29+ *without* semver exempt features.
@@ -456,7 +457,7 @@ impl Span {
     /// # Panics
     ///
     /// Panics if called from outside of a procedural macro. Unlike
-    /// `proc_macro2::Span`, the `proc_macro::Span` type can only exist within
+    /// `safe_proc_macro2::Span`, the `proc_macro::Span` type can only exist within
     /// the context of a procedural macro invocation.
     #[cfg(wrap_proc_macro)]
     pub fn unwrap(self) -> proc_macro::Span {
@@ -913,7 +914,7 @@ impl Debug for Punct {
 /// behavior of the resulting identifier.
 ///
 /// ```
-/// use proc_macro2::{Ident, Span};
+/// use safe_proc_macro2::{Ident, Span};
 ///
 /// fn main() {
 ///     let call_ident = Ident::new("calligraphy", Span::call_site());
@@ -925,8 +926,8 @@ impl Debug for Punct {
 /// An ident can be interpolated into a token stream using the `quote!` macro.
 ///
 /// ```
-/// use proc_macro2::{Ident, Span};
-/// use quote::quote;
+/// use safe_proc_macro2::{Ident, Span};
+/// use safe_quote::quote;
 ///
 /// fn main() {
 ///     let ident = Ident::new("demo", Span::call_site());
@@ -944,7 +945,7 @@ impl Debug for Punct {
 /// method.
 ///
 /// ```
-/// # use proc_macro2::{Ident, Span};
+/// # use safe_proc_macro2::{Ident, Span};
 /// #
 /// # let ident = Ident::new("another_identifier", Span::call_site());
 /// #
@@ -1302,8 +1303,8 @@ impl Literal {
     // a valid literal. This avoids reparsing/validating the literal's string
     // representation. This is not public API other than for quote.
     #[doc(hidden)]
-    pub unsafe fn from_str_unchecked(repr: &str) -> Self {
-        Literal::_new(unsafe { imp::Literal::from_str_unchecked(repr) })
+    pub fn from_str_unchecked(repr: &str) -> Self {
+        Literal::_new(imp::Literal::from_str_unchecked(repr))
     }
 }
 

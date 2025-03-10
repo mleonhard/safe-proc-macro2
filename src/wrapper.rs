@@ -814,11 +814,11 @@ impl Literal {
         }
     }
 
-    pub(crate) unsafe fn from_str_unchecked(repr: &str) -> Self {
+    pub(crate) fn from_str_unchecked(repr: &str) -> Self {
         if inside_proc_macro() {
             Literal::Compiler(proc_macro::Literal::from_str_unchecked(repr))
         } else {
-            Literal::Fallback(unsafe { fallback::Literal::from_str_unchecked(repr) })
+            Literal::Fallback(fallback::Literal::from_str_unchecked(repr))
         }
     }
 
@@ -995,7 +995,7 @@ impl Debug for Literal {
 pub(crate) fn invalidate_current_thread_spans() {
     if inside_proc_macro() {
         panic!(
-            "proc_macro2::extra::invalidate_current_thread_spans is not available in procedural macros"
+            "safe_proc_macro2::extra::invalidate_current_thread_spans is not available in procedural macros"
         );
     } else {
         crate::fallback::invalidate_current_thread_spans();

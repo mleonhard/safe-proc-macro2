@@ -70,6 +70,6 @@ fn initialize() {
     let hopefully_null_hook = panic::take_hook();
     panic::set_hook(original_hook);
     if sanity_check != &*hopefully_null_hook {
-        panic!("observed race condition in proc_macro2::inside_proc_macro");
+        panic!("observed race condition in safe_proc_macro2::inside_proc_macro");
     }
 }
