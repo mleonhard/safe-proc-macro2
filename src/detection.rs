@@ -51,7 +51,7 @@ fn initialize() {
 // sufficiently unlikely and less bad than printing panic messages to stderr
 // on correct use of this crate. Maybe there is a libstd feature request
 // here. For now, if a user needs to guarantee that this failure mode does
-// not occur, they need to call e.g. `proc_macro2::Span::call_site()` from
+// not occur, they need to call e.g. `safe_proc_macro2::Span::call_site()` from
 // the main thread before launching any other threads.
 #[cfg(no_is_available)]
 fn initialize() {
@@ -70,6 +70,6 @@ fn initialize() {
     let hopefully_null_hook = panic::take_hook();
     panic::set_hook(original_hook);
     if sanity_check != &*hopefully_null_hook {
-        panic!("observed race condition in proc_macro2::inside_proc_macro");
+        panic!("observed race condition in safe_proc_macro2::inside_proc_macro");
     }
 }

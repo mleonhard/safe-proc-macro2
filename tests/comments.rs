@@ -1,6 +1,6 @@
 #![allow(clippy::assertions_on_result_states)]
 
-use proc_macro2::{Delimiter, Literal, Spacing, TokenStream, TokenTree};
+use safe_proc_macro2::{Delimiter, Literal, Spacing, TokenStream, TokenTree};
 
 // #[doc = "..."] -> "..."
 fn lit_of_outer_doc_comment(tokens: &TokenStream) -> Literal {
