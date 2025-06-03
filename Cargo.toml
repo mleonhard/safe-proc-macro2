@@ -1,15 +1,15 @@
 [package]
-name = "proc-macro2"
+name = "safe-proc-macro2"
 version = "1.0.95"
 authors = ["David Tolnay <dtolnay@gmail.com>", "Alex Crichton <alex@alexcrichton.com>"]
 autobenches = false
 categories = ["development-tools::procedural-macro-helpers"]
 description = "A substitute implementation of the compiler's `proc_macro` API to decouple token-based libraries from the procedural macro use case."
-documentation = "https://docs.rs/proc-macro2"
+documentation = "https://docs.rs/safe-proc-macro2"
 edition = "2021"
 keywords = ["macros", "syn"]
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/dtolnay/proc-macro2"
+repository = "https://github.com/mleonhard/safe-proc-macro2"
 rust-version = "1.56"
 
 [package.metadata.docs.rs]
@@ -28,11 +28,11 @@ rustdoc-args = [
 features = ["span-locations"]
 
 [dependencies]
-unicode-ident = "1.0"
+unicode-xid = "0.2"
 
 [dev-dependencies]
 flate2 = "1.0"
-quote = { version = "1.0", default-features = false }
+safe-quote = { version = "1.0", default-features = false }
 rayon = "1.0"
 rustversion = "1"
 tar = "0.4"
@@ -63,4 +63,4 @@ members = ["benches/bench-libproc-macro", "tests/ui"]
 # carries the second-most-recent version number, pulling in quote which resolves
 # to a dependency on the just-published most recent version number. Thus the
 # patch will fail to apply because the version numbers are different.
-proc-macro2 = { path = "." }
+safe-proc-macro2 = { path = "." }

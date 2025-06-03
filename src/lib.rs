@@ -1,10 +1,6 @@
-//! [![github]](https://github.com/dtolnay/proc-macro2)&ensp;[![crates-io]](https://crates.io/crates/proc-macro2)&ensp;[![docs-rs]](crate)
-//!
-//! [github]: https://img.shields.io/badge/github-8da0cb?style=for-the-badge&labelColor=555555&logo=github
-//! [crates-io]: https://img.shields.io/badge/crates.io-fc8d62?style=for-the-badge&labelColor=555555&logo=rust
-//! [docs-rs]: https://img.shields.io/badge/docs.rs-66c2a5?style=for-the-badge&labelColor=555555&logo=docs.rs
-//!
-//! <br>
+//! This is a fork of `safe_proc_macro2` with unsafe code removed.
+//! See the [rejected PR](https://github.com/alexcrichton/proc-macro2/pull/261).
+//! ----
 //!
 //! A wrapper around the procedural macro API of the compiler's [`proc_macro`]
 //! crate. This library serves two purposes:
@@ -39,9 +35,9 @@
 //! # };
 //! # #[cfg(wrap_proc_macro)]
 //! pub fn my_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-//!     let input = proc_macro2::TokenStream::from(input);
+//!     let input = safe_proc_macro2::TokenStream::from(input);
 //!
-//!     let output: proc_macro2::TokenStream = {
+//!     let output: safe_proc_macro2::TokenStream = {
 //!         /* transform input */
 //!         # input
 //!     };
@@ -82,9 +78,10 @@
 //! Most types in this crate are `!Sync` because the underlying compiler
 //! types make use of thread-local memory, meaning they cannot be accessed from
 //! a different thread.
+#![forbid(unsafe_code)]
 
 // Proc-macro2 types in rustdoc of other crates get linked to here.
-#![doc(html_root_url = "https://docs.rs/proc-macro2/1.0.95")]
+#![doc(html_root_url = "https://docs.rs/safe-proc-macro2/1.0.95")]
 #![cfg_attr(any(proc_macro_span, super_unstable), feature(proc_macro_span))]
 #![cfg_attr(super_unstable, feature(proc_macro_def_site))]
 #![cfg_attr(docsrs, feature(doc_cfg))]
@@ -145,7 +142,7 @@ mod rcvec;
 #[cfg(wrap_proc_macro)]
 mod detection;
 
-// Public for proc_macro2::fallback::force() and unforce(), but those are quite
+// Public for safe_proc_macro2::fallback::force() and unforce(), but those are quite
 // a niche use case so we omit it from rustdoc.
 #[doc(hidden)]
 pub mod fallback;
@@ -397,7 +394,7 @@ impl Span {
         Span::_new(self.inner.located_at(other.inner))
     }
 
-    /// Convert `proc_macro2::Span` to `proc_macro::Span`.
+    /// Convert `safe_proc_macro2::Span` to `proc_macro::Span`.
     ///
     /// This method is available when building with a nightly compiler, or when
     /// building with rustc 1.29+ *without* semver exempt features.
@@ -405,7 +402,7 @@ impl Span {
     /// # Panics
     ///
     /// Panics if called from outside of a procedural macro. Unlike
-    /// `proc_macro2::Span`, the `proc_macro::Span` type can only exist within
+    /// `safe_proc_macro2::Span`, the `proc_macro::Span` type can only exist within
     /// the context of a procedural macro invocation.
     #[cfg(wrap_proc_macro)]
     pub fn unwrap(self) -> proc_macro::Span {
@@ -880,7 +877,7 @@ impl Debug for Punct {
 /// behavior of the resulting identifier.
 ///
 /// ```
-/// use proc_macro2::{Ident, Span};
+/// use safe_proc_macro2::{Ident, Span};
 ///
 /// fn main() {
 ///     let call_ident = Ident::new("calligraphy", Span::call_site());
@@ -892,8 +889,8 @@ impl Debug for Punct {
 /// An ident can be interpolated into a token stream using the `quote!` macro.
 ///
 /// ```
-/// use proc_macro2::{Ident, Span};
-/// use quote::quote;
+/// use safe_proc_macro2::{Ident, Span};
+/// use safe_quote::quote;
 ///
 /// fn main() {
 ///     let ident = Ident::new("demo", Span::call_site());
@@ -911,7 +908,7 @@ impl Debug for Punct {
 /// method.
 ///
 /// ```
-/// # use proc_macro2::{Ident, Span};
+/// # use safe_proc_macro2::{Ident, Span};
 /// #
 /// # let ident = Ident::new("another_identifier", Span::call_site());
 /// #
@@ -1269,8 +1266,8 @@ impl Literal {
     // a valid literal. This avoids reparsing/validating the literal's string
     // representation. This is not public API other than for quote.
     #[doc(hidden)]
-    pub unsafe fn from_str_unchecked(repr: &str) -> Self {
-        Literal::_new(unsafe { imp::Literal::from_str_unchecked(repr) })
+    pub fn from_str_unchecked(repr: &str) -> Self {
+        Literal::_new(imp::Literal::from_str_unchecked(repr))
     }
 }
 
